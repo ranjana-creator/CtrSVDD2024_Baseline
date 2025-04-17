@@ -22,14 +22,18 @@ def main(args):
     model.eval()
 
     scores_out = args.output_path
-
+    if not os.path.exists(scores_out):
+        os.makedirs(scores_out)
+        
     with torch.no_grad():
         for i, batch in enumerate(tqdm(test_loader, desc=f"Testing")):
             x, label, filenames = batch
             x = x.to(device)
             label = label.to(device)
+            #here goes mods
             _, pred = model(x)
             for p, filename in zip(pred, filenames):
+        
                 with open(os.path.join(scores_out, f'scores_{args.encoder}_randomseed_{args.random_seed}.txt'), "a") as f:
                     f.write(f"{filename} {p.item()}\n")
 

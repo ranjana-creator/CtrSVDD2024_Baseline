@@ -16,7 +16,7 @@ from torch import Tensor
 from models.backend import AASIST
 try:
     from s3prl.nn import S3PRLUpstream
-except NotFoundError:
+except FileNotFoundError:
     S3PRLUpstream = None
 import fairseq
 import argparse

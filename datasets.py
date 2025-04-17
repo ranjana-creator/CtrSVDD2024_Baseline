@@ -50,7 +50,21 @@ class SVDD2024(Dataset):
             bonafide_or_spoof = file.split(" ")[-1].strip()
             label = 1 if bonafide_or_spoof == "bonafide" else 0
         try:
-            x, _ = librosa.load(os.path.join(self.base_dir, file_name + ".flac"), sr=16000, mono=True)
+            file_path = os.path.join(self.base_dir, file_name)
+            # If it doesn't end with .flac and doesn't exist, try adding .flac
+            if not os.path.exists(file_path):
+                if not file_path.endswith(".flac"):
+                    file_path_flac = file_path + ".flac"
+                    if os.path.exists(file_path_flac):
+                        file_path = file_path_flac
+                    else:
+                        print(f"Error loading {file_name}: file not found (with or without .flac)")
+                        return None
+                else:
+                    print(f"Error loading {file_name}: file not found")
+                    return None
+
+            x, _ = librosa.load(os.path.join(file_path), sr=16000, mono=True)
             x = pad_random(x, self.max_len)
             x = librosa.util.normalize(x)
             # file_name is used for generating the score file for submission
